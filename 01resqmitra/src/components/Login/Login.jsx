@@ -7,7 +7,7 @@ function Login() {
         <h2 className="text-center text-3xl text-[#F75270] mb-6 font-bold">LOGIN</h2>
         
         <form>
-          {/* Email Field */}
+          
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-800 mb-2">Email</label>
             <input 
@@ -17,7 +17,7 @@ function Login() {
             />
           </div>
 
-          {/* Password Field */}
+         
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">Password</label>
             <input  
@@ -27,7 +27,7 @@ function Login() {
             />
           </div>
 
-          {/* Submit Button */}
+         
           <button 
             className="w-full bg-[#F75270] text-white rounded-md py-3 px-2 shadow-lg hover:bg-[#c93752] font-bold" 
             type="submit"
@@ -35,7 +35,7 @@ function Login() {
             SUBMIT
           </button>
 
-          {/* Register Input */}
+         
           {/* <div>
             <input 
               className="w-full mt-5 py-3 rounded-lg text-gray-800 px-32 shadow-lg hover:bg-[#c93752] text-center cursor-pointer"

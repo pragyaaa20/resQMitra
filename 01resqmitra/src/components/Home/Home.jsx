@@ -81,9 +81,9 @@ function Home() {
       <div className="container mx-auto max-w-5xl">
         <div className="flex flex-col md:flex-row items-start gap-8">
           
-          {/* Left Side: Red Features Box and Image */}
+          
           <div className="w-full md:w-1/3 flex-shrink-0">
-            {/* Red Features Box */}
+           
             <div className="bg-red-600 text-white p-6 rounded-lg shadow-lg">
               <ul className="space-y-4">
                 {features.map((feature, index) => (
@@ -95,7 +95,7 @@ function Home() {
               </ul>
             </div>
             
-            {/* Image below the red box */}
+            
             <img 
               src="/sidei.png"
               alt="Emergency Services" 
@@ -103,7 +103,7 @@ function Home() {
             />
           </div>
 
-          {/* Right Side: Main Text Content */}
+         
           <div className="w-full md:w-2/3 pt-15">
             <div className="text-gray-700 space-y-5 leading-relaxed text-base">
               <p>

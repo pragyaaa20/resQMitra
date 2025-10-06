@@ -9,7 +9,7 @@ function Solution() {
     <div id="solution" className="bg-gray-50 py-16 sm:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 
-        {/* --- Main Title Section --- */}
+        
         <div className="text-center mb-16">
           <h2 className=" font-bold text-xl text-red-600 tracking-wide uppercase">
             Your Guide in an Emergency
@@ -24,13 +24,13 @@ function Solution() {
 
        
 
-        {/* --- Two-Column Layout for Details --- */}
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
-          {/* Left Column (Main Guides) */}
+          
           <div className="lg:col-span-2 space-y-12">
             
-            {/* Accidents Guide */}
+            
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
                 <FaMedkit className="text-red-600 mr-3" /> Accidents (Road or Home)
@@ -43,7 +43,7 @@ function Solution() {
               </div>
             </div>
 
-            {/* Natural Disasters Guide */}
+            
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
                 <FaShieldAlt className="text-red-600 mr-3" /> Natural Disasters
@@ -54,7 +54,7 @@ function Solution() {
               </div>
             </div>
 
-            {/* Health & Medication Guide */}
+            
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
                 <FaUserMd className="text-red-600 mr-3" /> Health & Medication Safety
