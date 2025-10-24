@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaMapMarkerAlt, FaBullhorn, FaUsers, FaSyncAlt, FaShieldAlt } from 'react-icons/fa';
+import { emergencyAPI } from '../../services/apiService';
 
 
 
@@ -11,6 +12,8 @@ function Home() {
     "/image.webp"
   ];
   const [current, setCurrent] = useState(0);
+  const [isSOSLoading, setIsSOSLoading] = useState(false);
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
     
   useEffect(() => {
     const interval = setInterval(() => {
@@ -18,6 +21,84 @@ function Home() {
     }, 5000); // 5 sec
     return () => clearInterval(interval);
   }, [slides.length]);
+
+  // Function to show notification
+  const showNotification = (message, type = 'info') => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => {
+      setNotification({ show: false, message: '', type: '' });
+    }, 5000);
+  };
+
+  // Function to get user's current location
+  const getCurrentLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation is not supported by this browser.'));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            latitude: position.coords.latitude.toString(),
+            longitude: position.coords.longitude.toString()
+          });
+        },
+        (error) => {
+          let errorMessage = 'Unable to retrieve location.';
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = 'Location access denied by user.';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = 'Location information is unavailable.';
+              break;
+            case error.TIMEOUT:
+              errorMessage = 'Location request timed out.';
+              break;
+          }
+          reject(new Error(errorMessage));
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000
+        }
+      );
+    });
+  };
+
+  // Function to handle SOS button click
+  const handleSOSClick = async () => {
+    setIsSOSLoading(true);
+    
+    try {
+      // Get current location
+      showNotification('Getting your location...', 'info');
+      const location = await getCurrentLocation();
+      
+      // Make API call to register incident
+      showNotification('Sending SOS alert...', 'info');
+      const response = await emergencyAPI.registerIncident(location);
+      
+      // Show success message
+      showNotification('SOS alert sent successfully! Help is on the way.', 'success');
+      console.log('Incident registered:', response);
+      
+    } catch (error) {
+      console.error('Error sending SOS:', error);
+      
+      // Show user-friendly error message
+      if (error.message.includes('Location')) {
+        showNotification(`Location Error: ${error.message}. Please enable location services and try again.`, 'error');
+      } else {
+        showNotification('Failed to send SOS alert. Please try again or contact emergency services directly.', 'error');
+      }
+    } finally {
+      setIsSOSLoading(false);
+    }
+  };
 
 
 
@@ -35,6 +116,24 @@ function Home() {
   return (
     <div className="flex flex-col items-center bg-gray-100 ">
       
+      {/* Notification */}
+      {notification.show && (
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
+          notification.type === 'success' ? 'bg-green-500 text-white' :
+          notification.type === 'error' ? 'bg-red-500 text-white' :
+          'bg-blue-500 text-white'
+        }`}>
+          <div className="flex items-center">
+            <span className="mr-2">
+              {notification.type === 'success' ? '✅' : 
+               notification.type === 'error' ? '❌' : 
+               'ℹ️'}
+            </span>
+            {notification.message}
+          </div>
+        </div>
+      )}
+      
       <div className="w-full h-screen  relative overflow-hidden">
         <div className="w-full h-full bg-center bg-cover transition-all duration-700"
         style={{ backgroundImage: `url(${slides[current]})` }}></div>
@@ -47,9 +146,13 @@ function Home() {
         <p className="text-gray-600 text-lg">
           A Community-driven emergency response system
         </p>
-       <button className="bg-gradient-to-br from-red-600 to-red-800 text-white font-bold text-3xl py-5 px-14 mt-6 rounded-full shadow-xl hover:from-red-700 hover:to-red-900 active:from-red-800 active:to-red-900 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-opacity-75">
-  SOS
-</button>
+       <button 
+         onClick={handleSOSClick}
+         disabled={isSOSLoading}
+         className={`bg-gradient-to-br from-red-600 to-red-800 text-white font-bold text-3xl py-5 px-14 mt-6 rounded-full shadow-xl hover:from-red-700 hover:to-red-900 active:from-red-800 active:to-red-900 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-opacity-75 ${isSOSLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
+       >
+         {isSOSLoading ? 'Sending SOS...' : 'SOS'}
+       </button>
       </div>
 
       
