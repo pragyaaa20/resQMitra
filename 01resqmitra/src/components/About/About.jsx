@@ -42,7 +42,7 @@ function About() {
             </div>
             
             {/* Feature */}
-            <dl className="mt-12 space-y-10">
+            <dl className="mt-12  space-y-10">
               
               <div className="relative">
                 <dt>

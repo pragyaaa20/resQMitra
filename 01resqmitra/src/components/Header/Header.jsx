@@ -89,6 +89,11 @@ const Header = () => {
         <Link to="/solution" {...commonLinkProps}>
           SOLUTION
         </Link>
+        <Link to="/IncidentsVolunteer" {...commonLinkProps}>
+          SOL
+        </Link>
+       
+        
         {isAuthenticated && (
           <>
             <span>|</span>

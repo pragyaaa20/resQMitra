@@ -21,6 +21,8 @@ import {
   Navigate
 } from 'react-router-dom'
 
+
+import IncidentsVolunteer from './components/Volunteer/IncidentsVolunteer.jsx'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<Layout />}>
@@ -30,6 +32,10 @@ const router = createBrowserRouter(
       <Route path='/register' element={<Register />} />
       <Route path='/about' element={<About />} />
       <Route path='/solution' element={<Solution />} />
+      <Route path='/IncidentsVolunteer' element={<IncidentsVolunteer />} />
+     
+       
+      
       
       {/* Protected Routes */}
       <Route 

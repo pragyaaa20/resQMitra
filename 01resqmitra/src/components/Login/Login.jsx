@@ -110,7 +110,7 @@ function Login() {
           </div>
 
           <button 
-            className="w-full bg-[#F75270] text-white rounded-md py-3 px-2 shadow-lg hover:bg-[#c93752] font-bold disabled:opacity-50 disabled:cursor-not-allowed" 
+            className="w-full bg-[#F75270] text-white rounded-md py-3 px-2 shadow-lg hover:bg-[#c93752] font-bold  disabled:cursor-not-allowed" 
             type="submit"
             disabled={isSubmitting || !formData.email || !formData.password}
           >

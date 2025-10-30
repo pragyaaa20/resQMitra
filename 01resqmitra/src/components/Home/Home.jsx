@@ -143,7 +143,7 @@ function Home() {
       <div className="text-center mt-14">
         <h2 className="font-bold text-5xl">QUICK HELP WHEN</h2>
         <h2 className="font-bold text-4xl">YOU NEED IT MOST</h2>
-        <p className="text-gray-600 text-lg">
+        <p className="text-gray-600 text-xl">
           A Community-driven emergency response system
         </p>
        <button 
@@ -155,23 +155,28 @@ function Home() {
        </button>
       </div>
 
+      <section className="w-full bg-yellow-100 text-red-700 text-center py-4 font-bold text-lg mb-11 mt-14 border-red-400">
+    ⚠️ THIS IS AN EMERGENCY FACILITY. <br></br>
+    USERS ARE ADVISED TO USE THIS SERVICE CAREFULLY.
+  </section>
+
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-14 mb-8">
-        <div className="bg-white w-40 h-40 flex flex-col items-center justify-center rounded-lg shadow-lg hover:scale-105 transition">
-          <span className="text-4xl">🤝</span>
-          <p className="mt-2 font-semibold text-gray-700">Volunteer Help</p>
+        <div className="bg-white w-60 h-60 flex flex-col items-center justify-center rounded-lg shadow-lg hover:scale-105 transition">
+          <span className="text-6xl">🤝</span>
+          <p className="mt-2 font-semibold text-gray-700 text-xl">Volunteer Help</p>
         </div>
-        <div className="bg-white w-40 h-40 flex flex-col items-center justify-center rounded-lg shadow-lg hover:scale-105 transition">
-          <span className="text-4xl">👮</span>
-          <p className="mt-2 font-semibold text-gray-700">Police</p>
+        <div className="bg-white w-60 h-60 flex flex-col items-center justify-center rounded-lg shadow-lg hover:scale-105 transition">
+          <span className="text-6xl">👮</span>
+          <p className="mt-2 font-semibold text-gray-700 text-xl">Police</p>
         </div>
-        <div className="bg-white w-40 h-40 flex flex-col items-center justify-center rounded-lg shadow-lg hover:scale-105 transition">
-          <span className="text-4xl">🔥</span>
-          <p className="mt-2 font-semibold text-gray-700">Fire Help</p>
+        <div className="bg-white w-60 h-60 flex flex-col items-center justify-center rounded-lg shadow-lg hover:scale-105 transition">
+          <span className="text-6xl">🔥</span>
+          <p className="mt-2 font-semibold text-gray-700 text-xl">Fire Help</p>
         </div>
-        <div className="bg-white w-40 h-40 flex flex-col items-center justify-center rounded-lg shadow-lg hover:scale-105 transition">
-          <span className="text-4xl">💊</span>
-          <p className="mt-2 font-semibold text-gray-700">First Aid</p>
+        <div className="bg-white w-60 h-60 flex flex-col items-center justify-center rounded-lg shadow-lg hover:scale-105 transition">
+          <span className="text-6xl">💊</span>
+          <p className="mt-2 font-semibold text-gray-700 text-xl">First Aid</p>
         </div>
       </div>
 
@@ -180,50 +185,60 @@ function Home() {
       
   
   
-    <section className="bg-gray-100 p-6 md:p-10  mt-20  ml-2  py-10  mb-16 font-sans">
-      <div className="container mx-auto max-w-5xl">
-        <div className="flex flex-col md:flex-row items-start gap-8">
-          
-          
-          <div className="w-full md:w-1/3 flex-shrink-0">
-           
-            <div className="bg-red-600 text-white p-6 rounded-lg shadow-lg">
-              <ul className="space-y-4">
-                {features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-4">
-                    <span className="text-2xl">{feature.icon}</span>
-                    <span className="font-semibold text-lg">{feature.text}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            
-            <img 
-              src="/sidei.png"
-              alt="Emergency Services" 
-              className="mt-6 rounded-lg shadow-md w-full" 
-            />
-          </div>
+    <section className="bg-gray-100 py-16 px-6 md:px-12 font-sans mt-10 mb-16">
+    <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-stretch gap-12">
 
-         
-          <div className="w-full md:w-2/3 pt-15">
-            <div className="text-gray-700 space-y-5 leading-relaxed text-base">
-              <p>
-                The Emergency Response System is a community-driven platform designed to provide faster assistance during critical situations such as accidents, medical emergencies, natural disasters, or public safety threats. Traditional emergency services often face delays due to traffic, communication gaps, or limited resources, and our system bridges this gap by connecting people in need with nearby volunteers who can respond immediately.
-              </p>
-              <p>
-                Through features like SOS alerts, live location sharing, volunteer coordination, and admin monitoring, the platform ensures timely help, transparency, and security. Built with Spring Boot (Java) for the backend and React (JavaScript) for the frontend, the system offers real-time updates, scalability, and a user-friendly experience.
-              </p>
-              <p>
-                Our goal is to create a reliable, secure, and socially impactful solution that not only complements official emergency services but also strengthens community participation in saving lives.
-              </p>
-            </div>
-          </div>
+      {/* Left Sidebar */}
+      <div className="w-full md:w-1/3 flex flex-col">
+        {/* Features Card */}
+        <div className="bg-red-600 text-white p-6 rounded-2xl shadow-lg flex-1">
+          <ul className="space-y-4">
+            {features.map((feature, index) => (
+              <li key={index} className="flex items-center gap-3">
+                <span className="text-2xl">{feature.icon}</span>
+                <span className="font-semibold text-lg">{feature.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
+        {/* Sidebar Image */}
+        <img
+          src="/sidei.png"
+          alt="Emergency Services"
+          className="mt-6 rounded-2xl shadow-md w-full object-cover h-60 md:h-72"
+        />
+      </div>
+
+      {/* Right Content */}
+      <div className="w-full md:w-2/3 flex flex-col justify-center">
+        <h2 className="text-3xl font-bold text-gray-800 mb-6">Emergency Response System</h2>
+        <div className="text-gray-700 space-y-6 leading-relaxed text-lg">
+          <p>
+            The Emergency Response System is a community-driven platform designed to provide faster assistance during critical situations such as accidents, medical emergencies, natural disasters, or public safety threats. Traditional emergency services often face delays due to traffic, communication gaps, or limited resources, and our system bridges this gap by connecting people in need with nearby volunteers who can respond immediately.
+          </p>
+          <p>
+            Through features like SOS alerts, live location sharing, volunteer coordination, and admin monitoring, the platform ensures timely help, transparency, and security. Built with Spring Boot (Java) for the backend and React (JavaScript) for the frontend, the system offers real-time updates, scalability, and a user-friendly experience.
+          </p>
+          <p>
+            Our goal is to create a reliable, secure, and socially impactful solution that not only complements official emergency services but also strengthens community participation in saving lives.
+          </p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
+
+
+
+    
+
+
+
+
+
+
+
+
   
     </div>
   );
