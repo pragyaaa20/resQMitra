@@ -2,13 +2,13 @@ import axios from 'axios';
 
 // Create axios instance with base configuration
 const APIWithAuth = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
+  baseURL: import.meta.env.DEV ? '/api' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'),
   headers: {
     'Content-Type': 'application/json',
   },
 });
 const APIWithOutAuth = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
+  baseURL: import.meta.env.DEV ? '/api' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'),
   headers: {
     'Content-Type': 'application/json',
   },
