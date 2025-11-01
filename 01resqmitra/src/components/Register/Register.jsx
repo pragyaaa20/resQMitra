@@ -9,7 +9,7 @@ function Register() {
     phoneNum: '',
     password: '',
     confirmPassword: '',
-    role: 'User'
+    role: 'Volunteer'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -93,7 +93,7 @@ function Register() {
           phoneNum: '',
           password: '',
           confirmPassword: '',
-          role: 'User'
+          role: 'Volunteer'
         });
         // Redirect to login after 2 seconds
         setTimeout(() => {
@@ -180,18 +180,14 @@ function Register() {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-800 mb-2">Role</label>
-            <select
+            <input
               className="w-full px-3 py-2 bg-red-100 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              type="text"
               name="role"
-              value={formData.role}
-              onChange={handleChange}
-              required
-              disabled={isSubmitting}
-            >
-              <option value="User">User</option>
-              <option value="Volunteer">Volunteer</option>
-              <option value="Admin">Admin</option>
-            </select>
+              value="Volunteer"
+              readOnly
+              disabled
+            />
           </div>
 
           <div className="mb-4">

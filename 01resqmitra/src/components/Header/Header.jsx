@@ -1,18 +1,26 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 const Header = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, isAdmin, isVolunteer } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
+    navigate('/home', { replace: true });
+  };
+
+  const handleDashboardClick = (e) => {
+    e.preventDefault();
+    if (isAdmin()) {
+      navigate('/admin/home');
+    } else if (isVolunteer()) {
+      navigate('/volunteer/home');
+    }
   };
 
   const commonLinkProps = {
-    smooth: true,
-    duration: 500,
-    spy: true,
     className: "hover:underline cursor-pointer"
   };
 
@@ -34,22 +42,6 @@ const Header = () => {
                 <span className="text-sm">
                   Welcome, {user?.name} ({user?.role})
                 </span>
-                {user?.role?.toLowerCase() === 'admin' && (
-                  <Link 
-                    to="/admin" 
-                    className="bg-white text-red-600 font-semibold px-4 py-1 rounded hover:bg-gray-100 transition"
-                  >
-                    Admin Panel
-                  </Link>
-                )}
-                {user?.role?.toLowerCase() === 'volunteer' && (
-                  <Link 
-                    to="/volunteer" 
-                    className="bg-white text-red-600 font-semibold px-4 py-1 rounded hover:bg-gray-100 transition"
-                  >
-                    Volunteer Panel
-                  </Link>
-                )}
                 <button 
                   onClick={handleLogout}
                   className="bg-white text-red-600 font-semibold px-4 py-1 rounded hover:bg-gray-100 transition"
@@ -89,17 +81,12 @@ const Header = () => {
         <Link to="/solution" {...commonLinkProps}>
           SOLUTION
         </Link>
-        <Link to="/IncidentsVolunteer" {...commonLinkProps}>
-          SOL
-        </Link>
-       
-        
         {isAuthenticated && (
           <>
             <span>|</span>
-            <Link to="/history" {...commonLinkProps}>
-              HISTORY
-            </Link>
+            <button onClick={handleDashboardClick} className="hover:underline cursor-pointer">
+              DASHBOARD
+            </button>
           </>
         )}
       </nav>

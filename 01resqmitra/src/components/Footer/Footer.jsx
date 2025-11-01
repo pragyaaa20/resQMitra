@@ -29,7 +29,6 @@ const Footer = () => {
             <ul className="space-y-1 text-sm cursor-pointer">
               <li className="hover:underline">HOME</li>
               <li className="hover:underline">SOLUTIONS</li>
-              <li className="hover:underline">HISTORY</li>
             </ul>
           </div>
 

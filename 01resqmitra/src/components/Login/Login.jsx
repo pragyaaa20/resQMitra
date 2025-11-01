@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 function Login() {
@@ -11,23 +11,12 @@ function Login() {
   
   const { login, isAuthenticated, error, clearError, user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  const from = location.state?.from?.pathname || '/home';
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
-      // Redirect based on user role
-      if (user.role?.toLowerCase() === 'admin') {
-        navigate('/admin', { replace: true });
-      } else if (user.role?.toLowerCase() === 'volunteer') {
-        navigate('/volunteer', { replace: true });
-      } else {
-        navigate(from, { replace: true });
-      }
+      navigate('/home', { replace: true });
     }
-  }, [isAuthenticated, user, navigate, from]);
+  }, [isAuthenticated, user, navigate]);
 
   // Clear error when component mounts
   useEffect(() => {

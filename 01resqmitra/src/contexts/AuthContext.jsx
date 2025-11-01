@@ -110,19 +110,50 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeAuth = () => {
       try {
-        const token = localStorage.getItem('authToken');
-        const userData = localStorage.getItem('user');
+        const storedUserData = localStorage.getItem('userData');
 
-        if (token && userData) {
-          const user = JSON.parse(userData);
-          dispatch({
-            type: AUTH_ACTIONS.INITIALIZE_AUTH,
-            payload: {
-              user,
-              token,
-              isAuthenticated: true,
-            },
-          });
+        if (storedUserData) {
+          const userData = JSON.parse(storedUserData);
+          const { user, token, expiryDate } = userData;
+          
+          if (user && token && expiryDate) {
+            // Check if token is still valid
+            const now = new Date();
+            const expiry = new Date(expiryDate);
+            
+            if (now < expiry) {
+              dispatch({
+                type: AUTH_ACTIONS.INITIALIZE_AUTH,
+                payload: {
+                  user,
+                  token,
+                  isAuthenticated: true,
+                },
+              });
+            } else {
+              // Token expired, clear localStorage
+              localStorage.removeItem('userData');
+              dispatch({
+                type: AUTH_ACTIONS.INITIALIZE_AUTH,
+                payload: {
+                  user: null,
+                  token: null,
+                  isAuthenticated: false,
+                },
+              });
+            }
+          } else {
+            // Invalid data structure, clear localStorage
+            localStorage.removeItem('userData');
+            dispatch({
+              type: AUTH_ACTIONS.INITIALIZE_AUTH,
+              payload: {
+                user: null,
+                token: null,
+                isAuthenticated: false,
+              },
+            });
+          }
         } else {
           dispatch({
             type: AUTH_ACTIONS.INITIALIZE_AUTH,
@@ -135,6 +166,8 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
+        // Clear potentially corrupted data
+        localStorage.removeItem('userData');
         dispatch({
           type: AUTH_ACTIONS.INITIALIZE_AUTH,
           payload: {
@@ -155,22 +188,33 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const response = await authAPI.login(credentials);
-      
-      // Assuming the API returns { user: {...}, token: "..." }
-      const { user, token } = response;
+      if (response.status && response.data) {
+        const { name, email, role, token, expiryDate } = response.data;
+        const user = {
+          name,
+          email,
+          role
+        };
+        // Store all user data in a single localStorage key
+        const userData = {
+          user,
+          token,
+          expiryDate
+        };
+        
+        localStorage.setItem('userData', JSON.stringify(userData));
 
-      // Store in localStorage
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('user', JSON.stringify(user));
+        dispatch({
+          type: AUTH_ACTIONS.LOGIN_SUCCESS,
+          payload: { user, token },
+        });
 
-      dispatch({
-        type: AUTH_ACTIONS.LOGIN_SUCCESS,
-        payload: { user, token },
-      });
-
-      return { success: true, user };
+        return { success: true, user, message: response.message };
+      } else {
+        throw new Error(response.message || 'Login failed');
+      }
     } catch (error) {
-      const errorMessage = error.message || 'Login failed';
+      const errorMessage = error.message || error.error || 'Login failed';
       dispatch({
         type: AUTH_ACTIONS.LOGIN_FAILURE,
         payload: errorMessage,
@@ -207,8 +251,7 @@ export const AuthProvider = ({ children }) => {
       console.error('Logout error:', error);
     } finally {
       // Clear localStorage
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
+      localStorage.removeItem('userData');
       
       dispatch({ type: AUTH_ACTIONS.LOGOUT });
     }
@@ -234,11 +277,6 @@ export const AuthProvider = ({ children }) => {
     return hasRole('volunteer');
   }, [hasRole]);
 
-  // Check if user is regular user
-  const isUser = useCallback(() => {
-    return hasRole('user');
-  }, [hasRole]);
-
   // Context value
   const value = {
     ...state,
@@ -249,7 +287,6 @@ export const AuthProvider = ({ children }) => {
     hasRole,
     isAdmin,
     isVolunteer,
-    isUser,
   };
 
   return (

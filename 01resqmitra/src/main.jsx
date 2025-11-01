@@ -1,17 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.jsx'
 import Layout from './Layout.jsx'
 import Login from './components/Login/Login.jsx'
 import Register from './components/Register/Register.jsx'
 import Home from './components/Home/Home.jsx'
 import About from './components/About/About.jsx'
 import Solution from './components/Solution/Solution.jsx'
-import History from './components/History/History.jsx'
-import AdminPanel from './components/AdminPanel/AdminPanel.jsx'
-import VolunteerPanel from './components/VolunteerPanel/VolunteerPanel.jsx'
-import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx'
+import ProtectedRoute from './ProtectedRoute/ProtectedRoute.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import {
   createBrowserRouter,
@@ -20,9 +16,12 @@ import {
   RouterProvider,
   Navigate
 } from 'react-router-dom'
-
-
-import IncidentsVolunteer from './components/Volunteer/IncidentsVolunteer.jsx'
+import VolunteerIncidents from './components/Volunteer/VolunteerIncidents.jsx'
+import VolunteerHome from './components/Volunteer/VolunteerHome.jsx'
+import VolunteerProfile from './components/Volunteer/VolunteerProfile.jsx'
+import AdminHome from './components/Admin/AdminHome.jsx'
+import AdminIncidents from './components/Admin/AdminIncidents.jsx'
+import AdminVolunteers from './components/Admin/AdminVolunteers.jsx'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<Layout />}>
@@ -32,40 +31,40 @@ const router = createBrowserRouter(
       <Route path='/register' element={<Register />} />
       <Route path='/about' element={<About />} />
       <Route path='/solution' element={<Solution />} />
-      <Route path='/IncidentsVolunteer' element={<IncidentsVolunteer />} />
-     
-       
-      
-      
-      {/* Protected Routes */}
-      <Route 
-        path='/history' 
-        element={
-          <ProtectedRoute>
-            <History />
-          </ProtectedRoute>
-        } 
-      />
-      
+
       {/* Admin Only Routes */}
-      <Route 
-        path='/admin' 
-        element={
-          <ProtectedRoute allowedRoles={['Admin']}>
-            <AdminPanel />
-          </ProtectedRoute>
-        } 
-      />
+      <Route path='/admin/home' element={
+        <ProtectedRoute allowedRoles={['Admin']}>
+          <AdminHome />
+        </ProtectedRoute>
+      } />
+      <Route path='/admin/incidents' element={
+        <ProtectedRoute allowedRoles={['Admin']}>
+          <AdminIncidents />
+        </ProtectedRoute>
+      } />
+      <Route path='/admin/volunteers' element={
+        <ProtectedRoute allowedRoles={['Admin']}>
+          <AdminVolunteers />
+        </ProtectedRoute>
+      } />
       
       {/* Volunteer Only Routes */}
-      <Route 
-        path='/volunteer' 
-        element={
-          <ProtectedRoute allowedRoles={['Volunteer']}>
-            <VolunteerPanel />
-          </ProtectedRoute>
-        } 
-      />
+      <Route path='/volunteer/home' element={
+        <ProtectedRoute allowedRoles={['Volunteer']}>
+          <VolunteerHome />
+        </ProtectedRoute>
+      } />
+      <Route path='/volunteer/profile' element={
+        <ProtectedRoute allowedRoles={['Volunteer']}>
+          <VolunteerProfile />
+        </ProtectedRoute>
+      } />
+      <Route path='/volunteer/incidents' element={
+        <ProtectedRoute allowedRoles={['Volunteer']}>
+          <VolunteerIncidents />
+        </ProtectedRoute>
+      } />
 
       <Route path='*' element={<Navigate to='/home' replace />} />
     </Route>
