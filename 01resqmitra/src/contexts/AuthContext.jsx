@@ -189,11 +189,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.login(credentials);
       if (response.status && response.data) {
-        const { name, email, role, token, expiryDate } = response.data;
+        const { name, email, role, phone, token, expiryDate } = response.data;
         const user = {
           name,
           email,
-          role
+          role,
+          phone
         };
         // Store all user data in a single localStorage key
         const userData = {

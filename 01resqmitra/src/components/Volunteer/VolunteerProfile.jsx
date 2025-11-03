@@ -19,7 +19,7 @@ function VolunteerProfile() {
       setFormData({
         name: user.name || '',
         email: user.email || '',
-        phoneNum: user.phoneNum || ''
+        phoneNum: user.phone || ''
       });
     }
   }, [user]);
