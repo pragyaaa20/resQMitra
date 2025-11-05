@@ -38,7 +38,7 @@ function Home() {
         return;
       }
 
-      navigator.geolocation.watchPosition(
+      navigator.geolocation.getCurrentPosition(
         (position) => {
           resolve({
             latitude: position.coords.latitude.toString(),

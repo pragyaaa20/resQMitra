@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 function Login() {
@@ -8,15 +8,31 @@ function Login() {
     password: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [emailDisabled, setEmailDisabled] = useState(false);
   
   const { login, isAuthenticated, error, clearError, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      navigate('/home', { replace: true });
+      const returnTo = searchParams.get('returnTo');
+      if (returnTo) {
+        navigate(returnTo, { replace: true });
+      } else {
+        navigate('/home', { replace: true });
+      }
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [isAuthenticated, user, navigate, searchParams]);
+
+  // Pre-fill email if coming from email redirect
+  useEffect(() => {
+    const emailFromUrl = searchParams.get('email');
+    if (emailFromUrl) {
+      setFormData(prev => ({ ...prev, email: emailFromUrl }));
+      setEmailDisabled(true);
+    }
+  }, [searchParams]);
 
   // Clear error when component mounts
   useEffect(() => {
@@ -73,15 +89,22 @@ function Login() {
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-800 mb-2">Email</label>
             <input 
-              className="w-full px-3 py-2 bg-red-100 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                emailDisabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-red-100'
+              }`}
               type="email" 
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
               required
-              disabled={isSubmitting}
+              disabled={isSubmitting || emailDisabled}
             />
+            {emailDisabled && (
+              <p className="text-xs text-gray-500 mt-1">
+                Email is pre-filled from the alert notification
+              </p>
+            )}
           </div>
 
           <div className="mb-6">

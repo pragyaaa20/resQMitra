@@ -6,6 +6,7 @@ function VolunteerIncidents() {
   const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [actionLoading, setActionLoading] = useState({});
 
   useEffect(() => {
     const fetchIncidents = async () => {
@@ -42,6 +43,25 @@ function VolunteerIncidents() {
 
   const generateGoogleMapsLink = (latitude, longitude) => {
     return `https://www.google.com/maps?q=${latitude},${longitude}`;
+  };
+
+
+
+  const handleResolveIncident = async (incidentId) => {
+    try {
+      setActionLoading(prev => ({ ...prev, [`resolve_${incidentId}`]: true }));
+      
+      await VolunteerAPI.resolveIncident(incidentId);
+      const response = await VolunteerAPI.getIncidentByVolunteer();
+      if (response.status && response.data) {
+        setIncidents(response.data);
+      }
+    } catch (err) {
+      console.error('Error resolving incident:', err);
+      setError('Failed to resolve incident');
+    } finally {
+      setActionLoading(prev => ({ ...prev, [`resolve_${incidentId}`]: false }));
+    }
   };
 
   return (
@@ -134,6 +154,7 @@ function VolunteerIncidents() {
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Status</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Location</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Date Created</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -168,11 +189,29 @@ function VolunteerIncidents() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-gray-600">{formatDate(incident.createdAt)}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex space-x-2">
+                          {incident.status === 'ACTIVE' && (
+                            <button
+                              onClick={() => handleResolveIncident(incident.incidentId)}
+                              disabled={actionLoading[`resolve_${incident.incidentId}`]}
+                              className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {actionLoading[`resolve_${incident.incidentId}`] ? 'Resolving...' : 'Resolve'}
+                            </button>
+                          )}
+                          {incident.status === 'RESOLVED' && (
+                            <span className="px-3 py-1 bg-gray-200 text-gray-600 text-sm rounded">
+                              Completed
+                            </span>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
                       No incidents assigned to you yet.
                     </td>
                   </tr>

@@ -11,6 +11,9 @@ const ProtectedRoute = ({ children, allowedRoles = [], requireAuth = true }) => 
   }
   
   if (requireAuth && !isAuthenticated) {
+    if (location.pathname === '/volunteer/incident/alert' && location.search.includes('email=')) {
+      return children;
+    }
     return <Navigate to="/home" state={{ from: location }} replace />;
   }
   if (allowedRoles.length > 0 && isAuthenticated) {

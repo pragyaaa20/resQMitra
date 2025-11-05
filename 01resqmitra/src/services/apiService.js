@@ -111,6 +111,27 @@ export const VolunteerAPI = {
       throw error.response?.data || error;
     }
   },
+
+  acceptIncident: async (incidentId, volunteerId) => {
+    try {
+      const response = await APIWithAuth.post("/incident/volunteer/register", {
+        incidentId,
+        volunteerId,
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  resolveIncident: async (incidentId) => {
+    try {
+      const response = await APIWithAuth.put(`/incident/resolve/${incidentId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 };
 
 export const AdminAPI = {
@@ -124,11 +145,7 @@ export const AdminAPI = {
   },
   getIncidentsByDate: async (data) => {
     try {
-      const response = await APIWithAuth.request({
-        url: '/incident/get/bydate',
-        method: 'get',
-        data,
-      });
+      const response = await APIWithAuth.post("/incident/get/bydate", data);
       return response.data;
     } catch (error) {
       throw error.response?.data || error;

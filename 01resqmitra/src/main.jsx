@@ -17,6 +17,7 @@ import {
   Navigate
 } from 'react-router-dom'
 import VolunteerIncidents from './components/Volunteer/VolunteerIncidents.jsx'
+import VolunteerAlerts from './components/Volunteer/VolunteerAlerts.jsx'
 import VolunteerHome from './components/Volunteer/VolunteerHome.jsx'
 import VolunteerProfile from './components/Volunteer/VolunteerProfile.jsx'
 import AdminHome from './components/Admin/AdminHome.jsx'
@@ -63,6 +64,11 @@ const router = createBrowserRouter(
       <Route path='/volunteer/incidents' element={
         <ProtectedRoute allowedRoles={['Volunteer']}>
           <VolunteerIncidents />
+        </ProtectedRoute>
+      } />
+      <Route path='/volunteer/incident/alert' element={
+        <ProtectedRoute allowedRoles={['Volunteer']}>
+          <VolunteerAlerts />
         </ProtectedRoute>
       } />
 

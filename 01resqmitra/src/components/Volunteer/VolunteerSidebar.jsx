@@ -1,5 +1,5 @@
 import React from 'react'
-import { FaTachometerAlt, FaBriefcaseMedical, FaSignOutAlt } from "react-icons/fa"
+import { FaTachometerAlt, FaBriefcaseMedical, FaSignOutAlt, FaBell } from "react-icons/fa"
 import { CgProfile } from "react-icons/cg"
 import { MdOutlineEventNote } from "react-icons/md"
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -28,8 +28,13 @@ function VolunteerSidebar() {
       path: "/volunteer/profile"
     },
     {
+      icon: <FaBell />,
+      text: "Alerts",
+      path: "/volunteer/incident/alert"
+    },
+    {
       icon: <MdOutlineEventNote />,
-      text: "Incidents",
+      text: "My Incidents",
       path: "/volunteer/incidents"
     }
   ]
