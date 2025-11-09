@@ -151,6 +151,22 @@ export const AdminAPI = {
       throw error.response?.data || error;
     }
   },
+  getAllVolunteers: async () => {
+    try {
+      const response = await APIWithAuth.get('user/get/volunteer');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+  searchVolunteer: async (keyword) => {
+    try {
+      const response = await APIWithAuth.get(`user/get/volunteer/search/${keyword}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 }
 
 export default APIWithAuth;
