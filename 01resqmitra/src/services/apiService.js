@@ -94,7 +94,7 @@ export const authAPI = {
 export const emergencyAPI = {
   registerIncident: async (locationData) => {
     try {      
-      const response = await APIWithOutAuth.post('/incident/register', locationData);
+      const response = await APIWithAuth.post('/incident/register', locationData);
       return response.data;
     } catch (error) {
       throw error.response?.data || error;
@@ -132,6 +132,15 @@ export const VolunteerAPI = {
       throw error.response?.data || error;
     }
   },
+
+  updateLocation: async (locationData) => {
+    try {
+      const response = await APIWithAuth.put('/user/update/location', locationData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 };
 
 export const AdminAPI = {
@@ -145,7 +154,7 @@ export const AdminAPI = {
   },
   getIncidentsByDate: async (data) => {
     try {
-      const response = await APIWithAuth.post("/incident/get/bydate", data);
+      const response = await APIWithAuth.post("/incident/get/data", data);
       return response.data;
     } catch (error) {
       throw error.response?.data || error;

@@ -1,5 +1,5 @@
 import React, { createContext, useReducer, useEffect, useCallback } from 'react';
-import { authAPI } from '../services/apiService';
+import { authAPI, VolunteerAPI } from '../services/apiService';
 
 // Initial state
 const initialState = {
@@ -182,6 +182,34 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
   }, []);
 
+  // Function to get user's current location
+  const getCurrentLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation is not supported by this browser.'));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          reject(error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000, // 1 minute
+        }
+      );
+    });
+  };
+
   // Login function
   const login = useCallback(async (credentials) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
@@ -209,6 +237,18 @@ export const AuthProvider = ({ children }) => {
           type: AUTH_ACTIONS.LOGIN_SUCCESS,
           payload: { user, token },
         });
+
+        // If user is a volunteer, update their location
+        if (role?.toLowerCase() === 'volunteer') {
+          try {
+            const locationData = await getCurrentLocation();
+            await VolunteerAPI.updateLocation(locationData);
+            console.log('Volunteer location updated successfully');
+          } catch (locationError) {
+            console.error('Failed to update volunteer location:', locationError);
+            // Don't fail login if location update fails
+          }
+        }
 
         return { success: true, user, message: response.message };
       } else {

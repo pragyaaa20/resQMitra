@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 import { FaMapMarkerAlt, FaBullhorn, FaUsers, FaSyncAlt, FaShieldAlt } from 'react-icons/fa';
 import { emergencyAPI } from '../../services/apiService';
+import { useAuth } from '../../hooks/useAuth';
 
 
 
 function Home() {
+  const { isAuthenticated, user } = useAuth();
   
   const slides = [
     "/carousel01.png", 
@@ -14,6 +17,10 @@ function Home() {
   const [current, setCurrent] = useState(0);
   const [isSOSLoading, setIsSOSLoading] = useState(false);
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
+  const [sosDescription, setSosDescription] = useState('');
+
+  // Check if user is a citizen (not admin or volunteer)
+  const isCitizen = isAuthenticated && user?.role && user.role.toLowerCase() === 'citizen';
     
   useEffect(() => {
     const interval = setInterval(() => {
@@ -78,12 +85,19 @@ function Home() {
       showNotification('Getting your location...', 'info');
       const location = await getCurrentLocation();
       
+      // Prepare incident data with location and description
+      const incidentData = {
+        ...location,
+        description: sosDescription.trim() || 'Emergency assistance needed'
+      };
+      
       // Make API call to register incident
       showNotification('Sending SOS alert...', 'info');
-      const response = await emergencyAPI.registerIncident(location);
+      const response = await emergencyAPI.registerIncident(incidentData);
       
-      // Show success message
+      // Show success message and clear description
       showNotification('SOS alert sent successfully! Help is on the way.', 'success');
+      setSosDescription('');
       console.log('Incident registered:', response);
       
     } catch (error) {
@@ -146,19 +160,66 @@ function Home() {
         <p className="text-gray-600 text-xl">
           A Community-driven emergency response system
         </p>
-       <button 
-         onClick={handleSOSClick}
-         disabled={isSOSLoading}
-         className={`bg-gradient-to-br from-red-600 to-red-800 text-white font-bold text-3xl py-5 px-14 mt-6 rounded-full shadow-xl hover:from-red-700 hover:to-red-900 active:from-red-800 active:to-red-900 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-opacity-75 ${isSOSLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
-       >
-         {isSOSLoading ? 'Sending SOS...' : 'SOS'}
-       </button>
+        {isCitizen ? (
+          <div className="flex flex-col items-center mt-6">
+            {/* Description Input Field */}
+            <div className="mb-4 w-full max-w-md">
+              <label htmlFor="sosDescription" className="block text-sm font-medium text-gray-700 mb-2">
+                Describe your emergency (optional)
+              </label>
+              <textarea
+                id="sosDescription"
+                value={sosDescription}
+                onChange={(e) => setSosDescription(e.target.value)}
+                placeholder="Briefly describe what kind of help you need..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all duration-200 resize-none"
+                rows="3"
+                maxLength="200"
+                disabled={isSOSLoading}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                {sosDescription.length}/200 characters
+              </p>
+            </div>
+            
+            {/* SOS Button */}
+            <button 
+              onClick={handleSOSClick}
+              disabled={isSOSLoading}
+              className={`bg-gradient-to-br from-red-600 to-red-800 text-white font-bold text-3xl py-5 px-14 rounded-full shadow-xl hover:from-red-700 hover:to-red-900 active:from-red-800 active:to-red-900 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-opacity-75 ${isSOSLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
+            >
+              {isSOSLoading ? 'Sending SOS...' : 'SOS'}
+            </button>
+          </div>
+        ) : (
+          <div className="mt-6">
+            {!isAuthenticated ? (
+              <div className="text-center">
+                <p className="text-gray-600 text-lg font-medium mb-4">
+                  Please <span className="text-red-600 font-semibold">log in as a citizen</span> to access emergency SOS feature
+                </p>
+                <Link 
+                  to="/login"
+                  className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                >
+                  Login Now
+                </Link>
+              </div>
+            ) : (
+              <p className="text-gray-600 text-lg font-medium">
+                SOS feature is available only for <span className="text-red-600 font-semibold">citizens</span>
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
-      <section className="w-full bg-yellow-100 text-red-700 text-center py-4 font-bold text-lg mb-11 mt-14 border-red-400">
-    ⚠️ THIS IS AN EMERGENCY FACILITY. <br></br>
-    USERS ARE ADVISED TO USE THIS SERVICE CAREFULLY.
-  </section>
+      {isCitizen && (
+        <section className="w-full bg-yellow-100 text-red-700 text-center py-4 font-bold text-lg mb-11 mt-14 border-red-400">
+          ⚠️ THIS IS AN EMERGENCY FACILITY. <br></br>
+          USERS ARE ADVISED TO USE THIS SERVICE CAREFULLY.
+        </section>
+      )}
 
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-14 mb-8">

@@ -8,6 +8,7 @@ function AdminIncidents() {
   const [error, setError] = useState(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [keyword, setKeyword] = useState('');
   const [searching, setSearching] = useState(false);
   const [dateValidationError, setDateValidationError] = useState('');
 
@@ -73,32 +74,49 @@ function AdminIncidents() {
   };
 
   const handleDateSearch = async () => {
-    const validationError = validateDateRange(startDate, endDate);
-    if (validationError) {
-      setError(validationError);
+    // If only keyword is provided (no dates), validate that at least keyword exists
+    if (!keyword.trim() && (!startDate || !endDate)) {
+      setError('Please provide search keyword or select both start and end dates');
       return;
+    }
+
+    // If dates are provided, validate them
+    if ((startDate || endDate)) {
+      const validationError = validateDateRange(startDate, endDate);
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
     }
 
     try {
       setSearching(true);
       setError(null);
       
-      const searchData = {
-        startDate: startDate,
-        endDate: endDate
-      };
+      const searchData = {};
+      
+      // Add dates if provided
+      if (startDate && endDate) {
+        searchData.startDate = startDate;
+        searchData.endDate = endDate;
+      }
+      
+      // Add keyword if provided
+      if (keyword.trim()) {
+        searchData.keyword = keyword.trim();
+      }
 
       const response = await AdminAPI.getIncidentsByDate(searchData);
       
       if (response.status && response.data) {
         setIncidents(response.data);
       } else {
-        setError('No incidents found for the selected date range');
+        setError('No incidents found for the specified criteria');
         setIncidents([]);
       }
     } catch (err) {
-      console.error('Error searching incidents by date:', err);
-      setError('Failed to search incidents by date');
+      console.error('Error searching incidents:', err);
+      setError('Failed to search incidents');
     } finally {
       setSearching(false);
     }
@@ -135,6 +153,7 @@ function AdminIncidents() {
   const handleResetSearch = async () => {
     setStartDate('');
     setEndDate('');
+    setKeyword('');
     setError(null);
     setDateValidationError('');
     
@@ -165,9 +184,19 @@ function AdminIncidents() {
         {/* Search Section */}
         <div className="bg-white shadow-md rounded-lg p-6 mb-10">
           <h2 className="text-xl font-semibold mb-4 text-gray-800">
-            Search Incidents by Date
+            Search Incidents
           </h2>
           <div className="flex flex-wrap gap-4 items-center">
+            {/* Search Keyword Input */}
+            <input
+              type="text"
+              placeholder="Search by incident ID, status, or location..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleDateSearch()}
+              className="border border-gray-300 rounded-md p-3 w-80 focus:ring-2 focus:ring-red-500 outline-none"
+            />
+            
             {/* Start Date with Floating Label */}
             <div className="relative">
               <input
@@ -212,7 +241,7 @@ function AdminIncidents() {
             </div>
             <button 
               onClick={handleDateSearch}
-              disabled={searching || !!dateValidationError || !startDate || !endDate}
+              disabled={searching || !!dateValidationError}
               className="bg-red-600 text-white px-8 py-3 rounded-md hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed"
             >
               {searching ? 'Searching...' : 'Search'}
@@ -224,6 +253,11 @@ function AdminIncidents() {
             >
               {loading ? 'Loading...' : 'Reset'}
             </button>
+          </div>
+          
+          {/* Help Text */}
+          <div className="mt-3 text-sm text-gray-600">
+            <p>You can search by keyword alone, date range alone, or combine both for more specific results.</p>
           </div>
           
           {/* Date Validation Error */}

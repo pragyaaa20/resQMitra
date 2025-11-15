@@ -81,7 +81,7 @@ const Header = () => {
         <Link to="/solution" {...commonLinkProps}>
           SOLUTION
         </Link>
-        {isAuthenticated && (
+        {isAuthenticated && (isAdmin() || isVolunteer()) && (
           <>
             <span>|</span>
             <button onClick={handleDashboardClick} className="hover:underline cursor-pointer">
