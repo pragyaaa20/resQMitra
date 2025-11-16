@@ -143,6 +143,17 @@ export const VolunteerAPI = {
   },
 };
 
+export const CitizenAPI = {
+  getIncidentByCitizen: async () => {
+    try {
+      const response = await APIWithAuth.get('/incident/get/byvolunteer');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+};
+
 export const AdminAPI = {
   getAllIncidents: async () => {
     try {

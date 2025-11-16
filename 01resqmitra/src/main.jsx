@@ -23,6 +23,7 @@ import VolunteerProfile from './components/Volunteer/VolunteerProfile.jsx'
 import AdminHome from './components/Admin/AdminHome.jsx'
 import AdminIncidents from './components/Admin/AdminIncidents.jsx'
 import AdminVolunteers from './components/Admin/AdminVolunteers.jsx'
+import CitizenIncidents from './components/Citizen/CitizenIncidents.jsx'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<Layout />}>
@@ -32,6 +33,7 @@ const router = createBrowserRouter(
       <Route path='/register' element={<Register />} />
       <Route path='/about' element={<About />} />
       <Route path='/solution' element={<Solution />} />
+      <Route path='/citizen/incidents' element={<CitizenIncidents />} />
 
       {/* Admin Only Routes */}
       <Route path='/admin/home' element={

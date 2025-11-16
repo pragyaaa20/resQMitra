@@ -81,12 +81,24 @@ const Header = () => {
         <Link to="/solution" {...commonLinkProps}>
           SOLUTION
         </Link>
-        {isAuthenticated && (isAdmin() || isVolunteer()) && (
+        {isAuthenticated && (
           <>
-            <span>|</span>
-            <button onClick={handleDashboardClick} className="hover:underline cursor-pointer">
-              DASHBOARD
-            </button>
+            {(isAdmin() || isVolunteer()) && (
+              <>
+                <span>|</span>
+                <button onClick={handleDashboardClick} className="hover:underline cursor-pointer">
+                  DASHBOARD
+                </button>
+              </>
+            )}
+            {(!isAdmin() && !isVolunteer()) && (
+              <>
+                <span>|</span>
+                <Link to="/citizen/incidents" {...commonLinkProps}>
+                  INCIDENTS
+                </Link>
+              </>
+            )}
           </>
         )}
       </nav>
