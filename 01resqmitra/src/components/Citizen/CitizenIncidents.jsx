@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { CitizenAPI } from '../../services/apiService'
 
 function CitizenIncidents() {
   const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // New filter states
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL'); // ALL | ACTIVE | RESOLVED
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     const fetchIncidents = async () => {
@@ -40,16 +46,129 @@ function CitizenIncidents() {
     return `https://www.google.com/maps?q=${latitude},${longitude}`;
   };
 
+  // Filtering logic: compute filteredIncidents via useMemo
+  const filteredIncidents = useMemo(() => {
+    const keyword = searchKeyword.trim().toLowerCase();
 
+    // parse date filters
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    // if end exists, include the whole day
+    if (end) end.setHours(23, 59, 59, 999);
 
-  const totalIncidents = incidents.length;
-  const activeIncidents = incidents.filter(incident => incident.status === 'ACTIVE').length;
-  const resolvedIncidents = incidents.filter(incident => incident.status === 'RESOLVED').length;
+    return incidents.filter((incident) => {
+      // status filter
+      if (statusFilter !== 'ALL' && incident.status !== statusFilter) return false;
+
+      // keyword filter: match incidentId or description
+      if (keyword) {
+        const idMatch = incident.incidentId.toString().includes(keyword);
+        const desc = (incident.description || '').toLowerCase();
+        const descMatch = desc.includes(keyword);
+        if (!idMatch && !descMatch) return false;
+      }
+
+      // date range filter (based on createdAt)
+      if (start || end) {
+        const created = new Date(incident.createdAt);
+        if (start && created < start) return false;
+        if (end && created > end) return false;
+      }
+
+      return true;
+    });
+  }, [incidents, searchKeyword, statusFilter, startDate, endDate]);
+
+  const totalIncidents = filteredIncidents.length;
+  const activeIncidents = filteredIncidents.filter(incident => incident.status === 'ACTIVE').length;
+  const resolvedIncidents = filteredIncidents.filter(incident => incident.status === 'RESOLVED').length;
+
+  const resetFilters = () => {
+    setSearchKeyword('');
+    setStatusFilter('ALL');
+    setStartDate('');
+    setEndDate('');
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
       {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-10">
+        {/* Search / Filter Section */}
+        <div className="bg-white shadow-md rounded-lg p-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            {/* Keyword */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Search ( description)</label>
+              <input
+                type="text"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                placeholder="Search"
+                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+              />
+            </div>
+
+            {/* Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+              >
+                <option value="ALL">All</option>
+                <option value="ACTIVE">Active</option>
+                <option value="RESOLVED">Resolved</option>
+              </select>
+            </div>
+
+            {/* Start Date */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+              />
+            </div>
+
+            {/* End Date */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+              />
+            </div>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              Showing <span className="font-medium text-gray-800">{filteredIncidents.length}</span> result(s)
+            </div>
+            <div className="flex space-x-2">
+              <button
+                onClick={resetFilters}
+                className="px-3 py-1 bg-gray-100 border border-gray-300 rounded-md text-sm hover:bg-gray-200"
+                type="button"
+              >
+                Reset
+              </button>
+              <button
+                onClick={() => { /* optional: could re-fetch server if you later support server-side filtering */ }}
+                className="px-4 py-1 bg-red-500 text-white rounded-md text-sm hover:bg-red-600"
+                type="button"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Loading State */}
         {loading && (
           <div className="flex justify-center items-center h-64">
@@ -76,9 +195,9 @@ function CitizenIncidents() {
                   <h3 className="text-lg font-medium text-gray-700 mb-1">Total Reports</h3>
                   <p className="text-3xl font-bold text-gray-800">{totalIncidents}</p>
                 </div>
-                
+
                 <div className="h-12 w-px bg-gray-300"></div>
-                
+
                 <div className="text-center">
                   <h4 className="text-sm font-medium text-red-700 mb-1">Active</h4>
                   <div className="flex items-center space-x-2">
@@ -86,9 +205,9 @@ function CitizenIncidents() {
                     <p className="text-2xl font-bold text-red-600">{activeIncidents}</p>
                   </div>
                 </div>
-                
+
                 <div className="h-12 w-px bg-gray-300"></div>
-                
+
                 <div className="text-center">
                   <h4 className="text-sm font-medium text-green-700 mb-1">Resolved</h4>
                   <div className="flex items-center space-x-2">
@@ -97,17 +216,17 @@ function CitizenIncidents() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="text-right">
                 <div className="text-xs text-gray-500 mb-1">Status Distribution</div>
                 <div className="flex space-x-1">
-                  <div 
+                  <div
                     className="h-2 bg-red-500 rounded"
                     style={{
                       width: `${totalIncidents > 0 ? (activeIncidents / totalIncidents) * 60 : 0}px`
                     }}
                   ></div>
-                  <div 
+                  <div
                     className="h-2 bg-green-500 rounded"
                     style={{
                       width: `${totalIncidents > 0 ? (resolvedIncidents / totalIncidents) * 60 : 0}px`
@@ -133,8 +252,8 @@ function CitizenIncidents() {
                 </tr>
               </thead>
               <tbody>
-                {incidents.length > 0 ? (
-                  incidents.map((incident) => (
+                {filteredIncidents.length > 0 ? (
+                  filteredIncidents.map((incident) => (
                     <tr key={incident.incidentId} className="border-b hover:bg-gray-50">
                       <td className="px-6 py-4 text-gray-800">{incident.incidentId.toString().padStart(3, '0')}</td>
                       <td className="px-6 py-4 text-gray-600">
@@ -180,7 +299,7 @@ function CitizenIncidents() {
                         <svg className="w-12 h-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <p className="text-lg font-medium text-gray-600 mb-2">No emergency reports yet</p>
+                        <p className="text-lg font-medium text-gray-600 mb-2">No emergency reports found</p>
                       </div>
                     </td>
                   </tr>
@@ -202,7 +321,6 @@ function CitizenIncidents() {
                 <li>• <strong>Life-threatening emergencies:</strong> Click SOS immediately</li>
                 <li>• <strong>Provide accurate location:</strong> Help responders find you quickly</li>
                 <li>• <strong>Stay safe:</strong> Don't put yourself in danger while reporting</li>
-                 
               </ul>
             </div>
           </div>
