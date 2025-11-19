@@ -78,7 +78,7 @@ function AdminVolunteers() {
           <div className="flex flex-wrap gap-4 items-center">
             <input
               type="text"
-              placeholder="Search by name, roll, email, or phone..."
+              placeholder="Search by name, roll, email..."
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}

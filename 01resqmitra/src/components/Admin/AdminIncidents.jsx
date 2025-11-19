@@ -101,15 +101,39 @@ function AdminIncidents() {
         searchData.endDate = endDate;
       }
       
-      // Add keyword if provided
+      // Add keyword if provided (API-level)
       if (keyword.trim()) {
         searchData.keyword = keyword.trim();
       }
 
       const response = await AdminAPI.getIncidentsByDate(searchData);
-      
+
       if (response.status && response.data) {
-        setIncidents(response.data);
+        let results = response.data;
+
+        // Client-side filtering as a fallback/extra: ensure description (and other basic fields) are matched when keyword present
+        if (keyword.trim()) {
+          const kw = keyword.trim().toLowerCase();
+          results = results.filter((inc) => {
+            const fieldsToSearch = [
+              inc.description,
+              inc.incidentId?.toString(),
+              inc.status,
+              inc.createdBy,
+              inc.latitude?.toString(),
+              inc.longitude?.toString(),
+              inc.createdAt
+            ];
+            return fieldsToSearch.some(f => f && f.toString().toLowerCase().includes(kw));
+          });
+        }
+
+        if (results.length > 0) {
+          setIncidents(results);
+        } else {
+          setError('No incidents found for the specified criteria');
+          setIncidents([]);
+        }
       } else {
         setError('No incidents found for the specified criteria');
         setIncidents([]);
@@ -190,7 +214,7 @@ function AdminIncidents() {
             {/* Search Keyword Input */}
             <input
               type="text"
-              placeholder="Search by incident ID, status, or location..."
+              placeholder="Search by status, description..."
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleDateSearch()}
@@ -257,7 +281,7 @@ function AdminIncidents() {
           
           {/* Help Text */}
           <div className="mt-3 text-sm text-gray-600">
-            <p>You can search by keyword alone, date range alone, or combine both for more specific results.</p>
+            <p>You can search by keyword (including description), date range alone, or combine both for more specific results.</p>
           </div>
           
           {/* Date Validation Error */}
@@ -355,6 +379,7 @@ function AdminIncidents() {
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Incident ID</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Status</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Location</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Description</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Date Created</th>
                 </tr>
               </thead>
@@ -389,12 +414,20 @@ function AdminIncidents() {
                           </a>
                         </div>
                       </td>
+
+                      <td className="px-6 py-4 text-gray-700 max-w-xl">
+                        {/* show description truncated with tooltip for full text */}
+                        <div className="text-sm truncate" title={incident.description || ''}>
+                          {incident.description || '—'}
+                        </div>
+                      </td>
+
                       <td className="px-6 py-4 text-gray-600">{formatDate(incident.createdAt)}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
                       No incidents found.
                     </td>
                   </tr>
