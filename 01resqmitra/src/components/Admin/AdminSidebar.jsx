@@ -29,7 +29,7 @@ function AdminSidebar() {
     },
     {
       icon: <FaHandsHelping />,
-      text: "Volunteers",
+      text: " Citizen And Volunteers Lookup",
       path: "/admin/volunteers"
     }
   ]

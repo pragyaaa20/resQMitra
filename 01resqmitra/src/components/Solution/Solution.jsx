@@ -38,7 +38,7 @@ function Solution() {
               <div className="space-y-4 text-lg text-gray-600 leading-relaxed">
                 <p>When encountering an accident, remember the Three Cs: <strong>Check, Call, and Care.</strong></p>
                 <p><strong>1. Check the Scene:</strong> Your safety is the first priority. Check for dangers like traffic or fire before approaching.</p>
-                <p><strong>2. Call for Help:</strong> Call 112 immediately. Provide your exact location, the nature of the accident, and the number of people injured.</p>
+                <p><strong>2. Call for Help:</strong> Click SOS button or you can call 112 immediately. Provide your exact location, the nature of the accident, and the number of people injured.</p>
                 <p><strong>3. Care for the Injured:</strong> Do not move an injured person unless they are in immediate danger. Control severe bleeding by applying firm pressure with a clean cloth. Comfort and reassure them until help arrives.</p>
               </div>
             </div>
@@ -60,7 +60,7 @@ function Solution() {
                 <FaUserMd className="text-red-600 mr-3" /> Health & Medication Safety
               </h3>
               <div className="space-y-4 text-lg text-gray-600 leading-relaxed">
-                <p>Always take medication as prescribed and never share it. Keep a list of your medicines for emergencies. To recognize a stroke, remember <strong>F.A.S.T.</strong> (Face, Arms, Speech, Time to call help). For a heart attack, look for chest pain, shortness of breath, and pain in the arms/neck, and call 112 immediately.</p>
+                <p>Always take medication as prescribed and never share it. Keep a list of your medicines for emergencies. To recognize a stroke, remember <strong>F.A.S.T.</strong> (Face, Arms, Speech, Time to call help). For a heart attack, look for chest pain, shortness of breath, and pain in the arms/neck, and press SOS button or call 112 immediately.</p>
               </div>
             </div>
             

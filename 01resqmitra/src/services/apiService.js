@@ -145,8 +145,9 @@ export const VolunteerAPI = {
 
 export const CitizenAPI = {
   getIncidentByCitizen: async () => {
+    let data={}
     try {
-      const response = await APIWithAuth.get('/incident/get/byvolunteer');
+      const response = await APIWithAuth.post('/incident/get/data', data);
       return response.data;
     } catch (error) {
       throw error.response?.data || error;

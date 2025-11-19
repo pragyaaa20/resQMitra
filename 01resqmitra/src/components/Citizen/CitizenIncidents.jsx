@@ -199,10 +199,10 @@ function CitizenIncidents() {
             <div>
               <h3 className="text-lg font-semibold text-yellow-800 mb-2">Remember</h3>
               <ul className="text-sm text-yellow-700 space-y-1">
-                <li>• <strong>Life-threatening emergencies:</strong> Call 112 immediately</li>
+                <li>• <strong>Life-threatening emergencies:</strong> Click SOS immediately</li>
                 <li>• <strong>Provide accurate location:</strong> Help responders find you quickly</li>
                 <li>• <strong>Stay safe:</strong> Don't put yourself in danger while reporting</li>
-                <li>• <strong>Follow up:</strong> Be available to answer calls from emergency responders</li>
+                 
               </ul>
             </div>
           </div>

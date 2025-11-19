@@ -191,6 +191,8 @@ function Home() {
               {isSOSLoading ? 'Sending SOS...' : 'SOS'}
             </button>
           </div>
+
+          
         ) : (
           <div className="mt-6">
             {!isAuthenticated ? (
@@ -212,6 +214,11 @@ function Home() {
             )}
           </div>
         )}
+      </div>
+
+      <div>
+       <strong className="block font-medium text-center mt-10">Warning</strong>
+      <span className="block">An SOS can be sent only once every 20 minutes.</span>
       </div>
 
       {isCitizen && (

@@ -68,7 +68,7 @@ function AdminVolunteers() {
 
       {/* Main Content */}
       <main className="flex-1 p-10 bg-white">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Volunteer Management</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-6">Citizen And Volunteer Lookup</h2>
 
         {/* Search Section */}
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">
@@ -78,7 +78,7 @@ function AdminVolunteers() {
           <div className="flex flex-wrap gap-4 items-center">
             <input
               type="text"
-              placeholder="Search by name, email, or phone..."
+              placeholder="Search by name, roll, email, or phone..."
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -111,7 +111,7 @@ function AdminVolunteers() {
         {loading ? (
           <div className="flex justify-center items-center py-10">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
-            <span className="ml-2">Loading volunteers...</span>
+            <span className="ml-2">Loading...</span>
           </div>
         ) : (
           /* Volunteers Table */
@@ -125,7 +125,7 @@ function AdminVolunteers() {
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Role</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Status</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Location</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Actions</th>
+                  
                 </tr>
               </thead>
               <tbody>
@@ -151,14 +151,7 @@ function AdminVolunteers() {
                           : 'Not Available'
                         }
                       </td>
-                      <td className="px-6 py-4">
-                        <button className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 text-xs mr-2">
-                          Edit
-                        </button>
-                        <button className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 text-xs">
-                          Remove
-                        </button>
-                      </td>
+                      
                     </tr>
                   ))
                 ) : (
